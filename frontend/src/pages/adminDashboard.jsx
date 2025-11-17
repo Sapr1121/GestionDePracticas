@@ -12,6 +12,7 @@ import { OfertasTab } from '../components/admin/OfertasTab';
 import { EstudiantesHabilitadosTab } from '../components/admin/EstudiantesHabilitadosTab';
 import { ObservacionesTab } from '../components/admin/ObservacionesTab';
 import axios from 'axios';
+import { NotasTab } from '../components/admin/NotasTab';
 
 const AdminDashboard = () => {
     const { user, logout } = useAuth();
@@ -216,6 +217,7 @@ const AdminDashboard = () => {
                         onBloquear={handleBloquearEstudiante}
                     />
                 )}
+                {activeTab === 'notas' && <NotasTab />}
 
                 {/* SOLICITUDES PENDIENTES */}
                 {activeTab === 'solicitudes-practica' && (

@@ -62,6 +62,14 @@ empresaId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: false
+},
+vistoAdmin: {
+    type: Boolean,
+    default: false
+},
+fechaVistoAdmin: {
+    type: Date,
+    default: null
 }
 }, {
     timestamps: true

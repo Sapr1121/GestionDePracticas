@@ -385,3 +385,71 @@ export const asignarNotaFinal = async (req, res) => {
         res.status(500).json({ success: false, message: 'Error del servidor' });
     }
 };
+
+// ==========================================
+// ADMIN: Obtener todas las notas finales
+// ==========================================
+export const getAllNotasFinales = async (req, res) => {
+    try {
+        const asignaciones = await AsignacionTutor.find({
+            notaFinal: { $ne: null } // Solo las que tienen nota
+        })
+        .populate('estudianteId', 'nombre apellido cedula carrera correo')
+        .populate('tutorId', 'nombre apellido departamento')
+        .populate({
+            path: 'ofertaId',
+            select: 'nombreProyecto fechaInicio fechaFin',
+            populate: {
+                path: 'empresaId',
+                select: 'name nit'
+            }
+        })
+        .sort({ updatedAt: -1 });
+
+        res.status(200).json({
+            success: true,
+            total: asignaciones.length,
+            notas: asignaciones
+        });
+
+    } catch (error) {
+        console.error('Error al obtener notas:', error);
+        res.status(500).json({ success: false, message: 'Error del servidor' });
+    }
+};
+
+
+// ==========================================
+// ADMIN: Marcar nota como vista
+// ==========================================
+export const marcarNotaComoVista = async (req, res) => {
+    try {
+        const { asignacionId } = req.params;
+
+        const asignacion = await AsignacionTutor.findByIdAndUpdate(
+            asignacionId,
+            {
+                vistoAdmin: true,
+                fechaVistoAdmin: new Date()
+            },
+            { new: true }
+        );
+
+        if (!asignacion) {
+            return res.status(404).json({ 
+                success: false, 
+                message: 'Asignación no encontrada' 
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: 'Nota marcada como vista',
+            asignacion
+        });
+
+    } catch (error) {
+        console.error('Error al marcar como vista:', error);
+        res.status(500).json({ success: false, message: 'Error del servidor' });
+    }
+};
